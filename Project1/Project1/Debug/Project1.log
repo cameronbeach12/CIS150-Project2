@@ -1,0 +1,7 @@
+﻿  Source.cpp
+c:\repos\project1\project1\source.cpp(75): warning C4018: '<': signed/unsigned mismatch
+c:\repos\project1\project1\source.cpp(78): warning C4018: '<': signed/unsigned mismatch
+c:\repos\project1\project1\source.cpp(103): warning C4018: '<': signed/unsigned mismatch
+c:\repos\project1\project1\source.cpp(108): warning C4553: '==': result of expression not used; did you intend '='?
+c:\repos\project1\project1\source.cpp(121): warning C4715: 'login': not all control paths return a value
+  Project1.vcxproj -> C:\repos\Project1\Debug\Project1.exe
