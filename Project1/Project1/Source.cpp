@@ -16,17 +16,34 @@ struct valid_user {
 void populateUsers(vector<valid_user>&);
 void populateChart(vector< vector<string> >&);
 void displayChart(vector < vector<string> >);
+void reserveSeat(vector < vector<string> >&);
 string login(vector<valid_user>&);
+void checkReserveDiffSeat(bool&);
+int makeChoice();
 
 int main() {
 	vector<valid_user> users;
 	string current_user;
 	vector< vector<string> > chart;
+	int choice = -1;
 
 	populateUsers(users);
 	current_user = login(users);
 	populateChart(chart);
 	displayChart(chart);
+
+	while (choice != 7) {
+		choice = makeChoice();
+
+		cout << endl; //create some space - for design
+
+		if (choice == 1) {
+			displayChart(chart);
+		}
+		else if (choice == 2) {
+			reserveSeat(chart);
+		}
+	}
 
 	system("pause");
 	return 0;
@@ -52,8 +69,9 @@ void populateChart(vector< vector<string> > &chart) {
 	int cols = 0, rows = 0;
 	ifstream ins;
 
-	ins.open("chartIn.txt");
+	ins.open("chartIn.txt"); //open chartIn.txt
 
+	//Read each element up to a whitespace in column 1
 	//49 is ASCII code for '1'
 	while ((int)curr_ele[0] == 49) {
 		ins >> curr_ele;
@@ -61,10 +79,10 @@ void populateChart(vector< vector<string> > &chart) {
 		cols++;
 	}
 
-	cols -= 1; //while loop will count one extra row;
+	cols--; //while loop will count one extra row;
 	
 	ins.clear();
-	ins.seekg(0, ins.beg);
+	ins.seekg(0, ins.beg); //Sets the file pointer back to the beginning of the file
 
 	//count rows
 	for (int i = 0; !ins.eof(); i++) {
@@ -73,18 +91,19 @@ void populateChart(vector< vector<string> > &chart) {
 		rows++;
 	}
 
-	chart.resize(rows);
+	chart.resize(rows); //Resize the chart to match the amount of rows we have
 	
 	ins.clear();
-	ins.seekg(0, ins.beg);
+	ins.seekg(0, ins.beg); //Sets the file pointer back to the beginning of the file
 	
 	//assign the cols and rows values;
 	for (int i = 0; i < chart.size(); i++) {
-		chart[i].resize(cols);
+		chart[i].resize(cols); //Resize the amount of columns in each row
 		for (int j = 0; j < chart[i].size(); j++) {
-			ins >> chart[i][j];
+			ins >> chart[i][j]; //Reads each element from the chartIn file based on row and col
 		}
 	}
+	ins.close();
 }
 
 void displayChart(vector< vector<string> > chart) {
@@ -93,6 +112,52 @@ void displayChart(vector< vector<string> > chart) {
 			cout << chart[i][j] << " ";
 		}
 		cout << endl;
+	}
+}
+
+void reserveSeat(vector< vector<string> > &chart) {
+	int row, col;
+	char colChar;
+	bool choice = false;
+	char confirm;
+
+	while (choice == false) {
+		displayChart(chart);
+
+		cout << "Seat to reserve: ";
+		cin >> row >> colChar;
+
+		colChar = toupper(colChar);
+
+		col = int(colChar) - 65;
+		row -= 1;
+
+		if (row > chart.size() - 1 || col > chart[row].size() - 1 || row < 0 || col < 0){
+			cout << "That seat is not available on this plane" << endl;
+
+			checkReserveDiffSeat(choice);
+		}
+		else if (chart[row][col] == "X") {
+			cout << "That seat is already reserved" << endl;
+
+			checkReserveDiffSeat(choice);
+		}
+		else {
+			cout << "Would you like to reserve seat " << chart[row][col] << " (y/n)? ";
+			cin >> confirm;
+
+			confirm = toupper(confirm);
+
+			if (confirm == 'Y') {
+				cout << "Successfully reserved seat " << chart[row][col] << endl;
+
+				chart[row][col] = "X";
+				choice = true;
+			}
+			else {
+				checkReserveDiffSeat(choice);
+			}
+		}
 	}
 }
 
@@ -130,4 +195,37 @@ string login(vector<valid_user> &users) {
 			}
 		}
 	}
+}
+
+void checkReserveDiffSeat(bool &choice) {
+	char confirm;
+	
+	cout << "Would you like to reserve a different seat(y/n)? ";
+	cin >> confirm;
+
+	confirm = toupper(confirm);
+
+	if (confirm == 'Y') {
+		choice = false;
+		}
+	else {
+		choice = true;
+	}
+}
+
+int makeChoice() {
+	int choice;
+
+	cout << "1. Display Chart" << endl;
+	cout << "2. Reserve Seat" << endl;
+	cout << "3. Cancel Reservation" << endl;
+	cout << "4. Save Seat Chart to File" << endl;
+	cout << "5. Statistics" << endl;
+	cout << "6. Help" << endl;
+	cout << "7. Quit" << endl << endl;
+
+	cout << "What would you like to do? ";
+	cin >> choice;
+
+	return choice;
 }
