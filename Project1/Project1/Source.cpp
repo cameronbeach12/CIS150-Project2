@@ -14,8 +14,9 @@ struct valid_user {
 };
 
 void populateUsers(vector<valid_user>&);
-string login(vector<valid_user>&);
 void populateChart(vector< vector<string> >&);
+void displayChart(vector < vector<string> >);
+string login(vector<valid_user>&);
 
 int main() {
 	vector<valid_user> users;
@@ -25,6 +26,7 @@ int main() {
 	populateUsers(users);
 	current_user = login(users);
 	populateChart(chart);
+	displayChart(chart);
 
 	system("pause");
 	return 0;
@@ -82,6 +84,15 @@ void populateChart(vector< vector<string> > &chart) {
 		for (int j = 0; j < chart[i].size(); j++) {
 			ins >> chart[i][j];
 		}
+	}
+}
+
+void displayChart(vector< vector<string> > chart) {
+	for (int i = 0; i < chart.size(); i++) {
+		for (int j = 0; j < chart[i].size(); j++) {
+			cout << chart[i][j] << " ";
+		}
+		cout << endl;
 	}
 }
 
