@@ -46,41 +46,42 @@ void populateUsers(vector<valid_user> &users) {
 }
 
 void populateChart(vector< vector<string> > &chart) {
+	string curr_ele = "1", tmp;
+	int cols = 0, rows = 0;
 	ifstream ins;
-	string line, curr_element;
-	int line_number = 0, element_num = 0;
 
 	ins.open("chartIn.txt");
-	//Get the number of rows on the plane
-	while (!ins.eof()) {
-		getline(ins, line);
 
-		line_number++;
+	//49 is ASCII code for '1'
+	while ((int)curr_ele[0] == 49) {
+		ins >> curr_ele;
+
+		cols++;
 	}
 
-	//since each line is the same length, and I know there are 3 chars for each column except the last
-	//where there are 2, I added one to make up for the missing char at the end and divided by 3
-	//because 3 is the amount of chars each column takes up.
-	element_num = (line.size() + 1) / 3;
-
-	//resize the amount of rows to the line_number
-	chart.resize(line_number);
-
-	//send the files point back to the beginning
+	cols -= 1; //while loop will count one extra row;
+	
 	ins.clear();
-	ins.seekg(0, ins.beg); //the first parameter represents the offset
-						   //the second parameter represents where we want to go in our file.
+	ins.seekg(0, ins.beg);
 
-	//populate the chart
+	//count rows
+	for (int i = 0; !ins.eof(); i++) {
+		getline(ins, tmp);
+
+		rows++;
+	}
+
+	chart.resize(rows);
+	
+	ins.clear();
+	ins.seekg(0, ins.beg);
+	
+	//assign the cols and rows values;
 	for (int i = 0; i < chart.size(); i++) {
-		chart[i].resize(element_num);
-
+		chart[i].resize(cols);
 		for (int j = 0; j < chart[i].size(); j++) {
 			ins >> chart[i][j];
-			cout << chart[i][j] << " ";
 		}
-
-		cout << endl;
 	}
 }
 
@@ -105,7 +106,7 @@ string login(vector<valid_user> &users) {
 				if (users[i].password == passInput) {
 					cout << "Successfully logged in as " << users[i].username << endl;
 					cout << "==========================================" << endl;
-					logged_in == true;
+					logged_in = true;
 					return users[i].username;
 				}
 				else {
