@@ -26,10 +26,16 @@ void writeNewFile(vector< vector<string> >, string&);
 void stats(vector< vector<string> >, vector<string>);
 void help();
 bool checkCancel(bool);
-string login(vector<valid_user>&);
+string login(vector<valid_user>);
 void checkReserveDiffSeat(bool&);
 int makeChoice();
 
+/*
+Author - Cameron Beach
+Creation Date - 11/20/18
+Modification Date - 12/8/18
+Purpose - Airplane seat reservation system with altering sizes of planes
+*/
 int main() {
 	vector<valid_user> users; // vector of valid users
 	string current_user, chartName; //string of the current user and current chart name
@@ -84,6 +90,14 @@ int main() {
 	return 0;
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 11/21/18
+Modification Date - 11/22/18
+Purpose - Populate the users vector
+Pre-condition - Must get a vector of valid users passed by address
+Post-condition - the vector of valid users will be populated from the systemUser.txt file
+*/
 void populateUsers(vector<valid_user> &users) {
 	ifstream ins; // input file stream
 	int count = 0; // will be used to figure out what user we are currently populating
@@ -100,6 +114,14 @@ void populateUsers(vector<valid_user> &users) {
 	}
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 11/22/18
+Modification Date - 11/22/18
+Purpose - Populate the seating chart
+Pre-condition - Must get a vector of vectors of strings passed by reference, must get a vector of strings passed by reference, must get the chart file name passed by value
+Post-condition - The two vectors passed in will be populated by reading the file name provided by chartName
+*/
 void populateChart(vector< vector<string> > &chart, vector<string> &reserves, string chartName) {
 	string curr_ele = "1", tmp; // curr_ele holds the current seat value IE. 1A, tmp holds a temporary line
 	int cols = 0, rows = 0; // cols holds the number of columns in the file, rows hold the number of rows in the file
@@ -146,6 +168,14 @@ void populateChart(vector< vector<string> > &chart, vector<string> &reserves, st
 	ins.close(); // close the file
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 11/22/18
+Modification Date - 11/22/18
+Purpose - Display the seating chart
+Pre-condition - Must get a vector of vectors of strings passed by value
+Post-condition - The seating chart will be displayed
+*/
 void displayChart(vector< vector<string> > chart) {
 	for (int i = 0; i < chart.size(); i++) { // rows
 		for (int j = 0; j < chart[i].size(); j++) { // cols
@@ -155,6 +185,14 @@ void displayChart(vector< vector<string> > chart) {
 	}
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 11/23/18
+Modification Date - 12/09/18
+Purpose - Reserve a seat
+Pre-condition - Must get a vector of vectors of strings passed by reference, must get a vector of strings passed by reference
+Post-condition - The seat selected is reserved, or the user will choose not to reserve a seat in which case no seats are reserved
+*/
 void reserveSeat(vector< vector<string> > &chart, vector<string> &reserves) {
 	int row, col, testMid; // row and col will hold their respective row and column value, testMid will hold the middle value of the column EX 8 cols / 2 = 4;
 	string seatType; // holds the seat type that the user is trying to reserve
@@ -234,6 +272,14 @@ void reserveSeat(vector< vector<string> > &chart, vector<string> &reserves) {
 	displayChart(chart); // display the new chart
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 11/23/18
+Modification Date - 12/09/18
+Purpose - Cancel a seat reservation
+Pre-condition - Must get a vector of vectors of strings passed by reference, must get a vector of strings passed by reference
+Post-condition - The seat selected is cancelled, if no seat is selected then no seat is cancelled
+*/
 void cancelReserve(vector< vector<string> > &chart, vector<string> &reserves) {
 	string userCancel, rowString; // userCancel will hold the value of the seat the user wants to cancel, rowString will hold the row number as a string
 	char confirm; // used for user confirmation purposes
@@ -287,7 +333,7 @@ void cancelReserve(vector< vector<string> > &chart, vector<string> &reserves) {
 				confirm = toupper(confirm); // convert to uppercase
 
 				if (confirm == 'Y') { // this will execute if the user confirms the cancellation
-					cout << "Reservation on seat " << userCancel << " was successful!" << endl << endl;
+					cout << "Reservation cancellation on seat " << userCancel << " was successful!" << endl << endl;
 					
 					//Get the row and column to be replaced in the array
 					for (int j = 0; j < reserves[i].size(); j++) {
@@ -308,6 +354,8 @@ void cancelReserve(vector< vector<string> > &chart, vector<string> &reserves) {
 
 					//Remove the element from the reserves vector
 					reserves.erase(reserves.begin() + i);
+
+					choiceMade = true;
 
 					break;
 				}
@@ -330,6 +378,14 @@ void cancelReserve(vector< vector<string> > &chart, vector<string> &reserves) {
 	displayChart(chart); // displays the new chart
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 12/03/18
+Modification Date - 12/05/18
+Purpose - Write the chart to a file of the users choice, replaces the old chart file
+Pre-condition - Must get a vector of vectors of strings passed by value, must get a string holding the chart file name passed by reference
+Post-condition - The new file replaces the old chart file and saves changes
+*/
 void writeNewFile(vector< vector<string> > chart, string &chartFile) {
 	string newFileName, tmp = chartFile; // newFileName will hold the name of the new chart file, tmp holds the current name of the chart file
 	ofstream changeInFile; // changeInFile will write the new chart file name to our currFile.txt file
@@ -348,6 +404,14 @@ void writeNewFile(vector< vector<string> > chart, string &chartFile) {
 	cout << "File " << chartFile << " has successfully been written" << endl << endl; // lets us know that the file has successfully been written
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 12/05/18
+Modification Date - 12/05/18
+Purpose - Calculates the stats
+Pre-condition - Must get a vector of vectors of strings passed by value, must get a vector of strings passed by reference
+Post-condition - outputs and calculates the statistics of the current seating chart
+*/
 void stats(vector< vector<string> > chart, vector<string> reserves) {
 	float percentAvail = ((chart.size() * chart[0].size()) - reserves.size()) / float(chart.size() * chart[0].size()); // calculates percent of available seats
 	float percentReserved = reserves.size() / float(chart.size() * chart[0].size()); // calculates percent of reserved seats
@@ -388,6 +452,14 @@ void stats(vector< vector<string> > chart, vector<string> reserves) {
 	outs.close(); // close the statistics.txt file
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 12/05/18
+Modification Date - 12/05/18
+Purpose - Help menu
+Pre-condition - no pre conditions
+Post-condition - outputs the help menu
+*/
 void help() { // help menu for each functionality the system has
 	cout << endl << "1. Display Chart - Displays the updated chart of reserved and available seats." << endl;
 	cout << "2. Reserve Seat - Displays the updated chart of reserved and available seats, prompts for a valid seat selection." << endl << "Input the row number and column letter.";
@@ -398,6 +470,14 @@ void help() { // help menu for each functionality the system has
 	cout << "5. Statistics - Saves the statistics of the system to a file name 'statistics'." << endl << endl;
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 12/05/18
+Modification Date - 12/05/18
+Purpose - Checks if the user wants to cancel a different reserved seat or continue with a different seat
+Pre-condition - must get a bool check value passed in
+Post-condition - returns the users choice
+*/
 bool checkCancel(bool check) {
 	char userChoice; // will check if the user wants to cancel a reservation
 
@@ -414,7 +494,15 @@ bool checkCancel(bool check) {
 	}
 }
 
-string login(vector<valid_user> &users) {
+/*
+Author - Cameron Beach
+Creation Date - 11/22/18
+Modification Date - 11/22/18
+Purpose - Log in to the system
+Pre-condition - Must get a vector of valid users passed by value
+Post-condition - The current user will be returned
+*/
+string login(vector<valid_user> users) {
 	string userInput; // username input
 	string passInput; // password input
 	bool logged_in = false; // check if the user has successfully logged in.
@@ -450,6 +538,14 @@ string login(vector<valid_user> &users) {
 	}
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 12/05/18
+Modification Date - 12/05/18
+Purpose - Checks if the user wants to reserve a different seat or to exit the reservation menu
+Pre-condition - must get a bool check value passed in by reference
+Post-condition - changes the value passed in to the users choice
+*/
 void checkReserveDiffSeat(bool &choice) {
 	char confirm; // used for user confirmation
 	
@@ -466,6 +562,14 @@ void checkReserveDiffSeat(bool &choice) {
 	}
 }
 
+/*
+Author - Cameron Beach
+Creation Date - 11/22/18
+Modification Date - 11/22/18
+Purpose - Gets the user input for their choice
+Pre-condition - no pre conditions
+Post-condition - returns the users choice
+*/
 int makeChoice() {
 	int choice; // controls the user choice
 
